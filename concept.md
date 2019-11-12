@@ -4,7 +4,7 @@ A game whose goal is to traverse the road as a frog without getting hit by the c
 
 ## User Stories
 
-- As a user, when the page loads I select a frog avatar and difficulty level
+- ✅ As a user, when the page loads I select a frog avatar and difficulty level
 
 - As a user, when I submit my selections, the game screen loads
 

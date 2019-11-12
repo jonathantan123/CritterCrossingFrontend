@@ -90,6 +90,18 @@ img {
     background-color: rgba(0,0,0,0.5);
     color: White;
 }
+#form-overlay{
+    display: block;
+    position: absolute;
+    text-align: center;
+    top: 0px;
+    left: 0px;
+    z-index: 2;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0);
+    color: White;
+}
 
 #win-overlay{
     display: none;
@@ -118,7 +130,19 @@ img {
 }
 
 #start-overlay{
-    display: block;
+    display: none;
+    position: absolute;
+    text-align: center;
+    top: 0px;
+    left: 0px;
+    z-index: 2;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    color: White;
+}
+#spacebar-overlay{
+    display: none;
     position: absolute;
     text-align: center;
     top: 0px;

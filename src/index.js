@@ -4,10 +4,10 @@ document.addEventListener("DOMContentLoaded", ()=>{
     const FROG_URL = "/frogs"
     const VEHICLE_URL = "/vehicles"
     const LANE_URL = "/lanes"
-    const CAR_MOVE_TIME = 200 // in ms
-    const CAR_ADD_TIME = 1000 // in ms
+    let CAR_MOVE_TIME = 175// in ms
+    let CAR_ADD_TIME = 800  // in ms
     const FROG_MOVE_INC = 10; // in px
-    const VEHICLE_MOVE_INC = 10; // in px
+    const VEHICLE_MOVE_INC = 10 // in px
 
     // HTML elements
     let gameHolder = document.getElementById("game-holder")
@@ -20,12 +20,14 @@ document.addEventListener("DOMContentLoaded", ()=>{
     let startTag = document.getElementById("start-overlay")
     let prizeTag = document.getElementById("prize")
     let winTag = document.getElementById("win-overlay")
-
+    let formOverlayTag =document.getElementById("form-overlay")
+    let spaceBarTag = document.getElementById("spacebar-overlay")
 
     //Data storage
     let lanes = []
     let vehicles = [] // array of html elements
     let lives = 3
+
 
     // flags
     let paused = true;
@@ -299,6 +301,20 @@ document.addEventListener("DOMContentLoaded", ()=>{
 
     // HANDLER STUFF =============================================================
 
+    function formSubmitHandler(e){
+        e.preventDefault()
+
+        level = parseInt(e.target[0].value)
+
+        CAR_MOVE_TIME = CAR_MOVE_TIME - level * 50//= 200 // in ms
+        CAR_ADD_TIME = CAR_ADD_TIME - level * 200//= 1000 // in ms
+
+        let id = e.target[2].value
+
+        getAvatar(id)
+        getLanes() 
+    }
+
     // adds the keydown listener to the document
     function addListener(){
         console.log("adding Event Listener")
@@ -347,9 +363,11 @@ document.addEventListener("DOMContentLoaded", ()=>{
             }
         }else{ // START GAME
             
+            // Hit Enter
             if(e.keyCode === 13 ){
                 lifeDiv.style.display = "none"
-                startTag.style.display = "block"
+                //startTag.style.display = "block"
+                spaceBarTag.style.display = "block"
                 locked = false
             }
 
@@ -359,6 +377,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
                 paused = !paused
                 pauseTag.style.display = "none"
                 startTag.style.display = "none"
+                spaceBarTag.style.display = "none"
                 
                 //Set the car move interval
                 moveCarInterval = setInterval(moveCars, CAR_MOVE_TIME)
@@ -399,6 +418,10 @@ document.addEventListener("DOMContentLoaded", ()=>{
             getCar(lane)
             
         })
+        formOverlayTag.style.display = "none"
+        // startTag.style.display = "block"
+
+        document.addEventListener("keydown", keyDownHandler) 
     }
 
     function getLanes(){
@@ -407,6 +430,8 @@ document.addEventListener("DOMContentLoaded", ()=>{
             .then(data => {
                 lanes = data
             
+                startTag.style.display = "block"
+
                  //load initial cars
                 getStartingCars()
             })
@@ -428,9 +453,33 @@ document.addEventListener("DOMContentLoaded", ()=>{
                 prizeTag.style.top = `${TOP_EDGE - 3}px`;
                 prizeTag.style.left = `${Math.floor(Math.random()* WIDTH ) - 20}px`
 
-                document.addEventListener("keydown", keyDownHandler)
+                
             })
         
+    }
+
+    function dropDown(frogs) {
+        let formTag = document.getElementById("form")
+        let avatarList = document.createElement("select")
+   
+        frogs.forEach((frog)=>{
+           
+            avatarList.appendChild(new Option (`${frog.avatar}`, frog.id))
+        })
+
+        formTag.appendChild(avatarList)
+        
+        formTag.addEventListener("submit", formSubmitHandler)
+
+        // avatarList.addEventListener("change", (e)=>{
+        //     frog.innerHTML = e.target.value
+        // })
+    }
+
+    function fetchAllFrogs() {
+        fetch(`${BASE_URL}${FROG_URL}`)
+        .then(resp => resp.json())
+        .then(data => dropDown(data))
     }
 
     //=======================================================
@@ -443,14 +492,16 @@ document.addEventListener("DOMContentLoaded", ()=>{
     // on submit, hide the form, show the gameboard
 
     //fetch and Add the avatar
-    let id =5 //this will be changed when we do form
-    getAvatar(id)
+    //this will be changed when we do form
 
-    //get the lanes
-    getLanes() 
+    fetchAllFrogs()
+   
 
     
-    
+
 
 }) // END DOM LISTENER
+
+
+
 
