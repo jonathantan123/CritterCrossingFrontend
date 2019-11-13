@@ -5,7 +5,6 @@ const LANE_URL = "/lanes"
 
 class ApiConnector{
 
-
     // Fetches a random car from the api to add to the given or a random lane
     static getCar(game, lane = Lane.all[Math.floor(Math.random()*5)]){
         
@@ -21,13 +20,14 @@ class ApiConnector{
                 vehicleTag.dataset.dir = lane.direction
                 game.gameBoard.appendCar(vehicleTag, lane)
                 
+                
             })
 
     }
 
     // Fetches a car for each lane to begin the round
     static getStartingCars(game){
-        console.log("here")
+        
         Vehicle.tags = []
        
         Lane.all.forEach(lane => {

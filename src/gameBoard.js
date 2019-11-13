@@ -1,3 +1,5 @@
+let countDownInterval
+
 class GameBoard{
 
     constructor(game){
@@ -23,6 +25,7 @@ class GameBoard{
         this.spacebarOverlay = document.getElementById("spacebar-overlay") 
     }
 
+    // On starting form submit, fetch the avatar
     formSubmitHandler = (e) => {
         e.preventDefault()
         this.game.setLevel(parseInt(e.target[0].value))
@@ -33,6 +36,7 @@ class GameBoard{
         ApiConnector.getLanes(this.game) 
     }
 
+    // Builds the avatar dropDown menu
     buildDropDown(frogs) {
         let formTag = document.getElementById("form")
         let avatarList = document.createElement("select")
@@ -45,6 +49,36 @@ class GameBoard{
         formTag.appendChild(avatarList)
         
         formTag.addEventListener("submit", this.formSubmitHandler)
+
+    }
+
+    // Starts the game start countdown
+    setCountDown(){
+        countDownInterval = setInterval(this.changeCount, 1000)
+    }
+
+    // Increments the countdown
+    changeCount = () =>{
+        this.game.count--
+        if(this.game.count === 0 ){
+            this.countdownOverlay.innerText = "GO!"
+        }else if(this.game.count === -1){
+            this.countdownOverlay.style.display = "none"
+            clearInterval(countDownInterval)
+        }else{
+            this.countdownOverlay.innerText = this.game.count
+        }
+    }
+
+    // Place the prize avatar on the DOM
+    placePrize(prize){
+        prize.setLocation(`${Math.floor(Math.random()* this.WIDTH ) - 20}px`, `${this.TOP_EDGE - 3}px`)
+    }
+
+    // Put the frog avatar at the starting position
+    resetFrog(frog){
+        frog.tag.style.top = `${this.BOTTOM_EDGE - 27}px`
+        frog.tag.style.left = `${this.RIGHT_EDGE/2}px`
 
     }
 
@@ -71,25 +105,19 @@ class GameBoard{
 
     }
 
-    resetFrog(frog){
-        frog.tag.style.top = `${this.BOTTOM_EDGE - 27}px`
-        frog.tag.style.left = `${this.RIGHT_EDGE/2}px`
- 
-        console.log("putting frog at: (", frog.tag.style.left, ", ", frog.tag.style.top, ")" )
-
-    }
-
-
-    removeVehicle(vehicle, index){
+    // Removes a given vehicle from the DOM
+    removeVehicle = (vehicle, index)=>{
+        console.log("removing vehicle at index ", index)
         this.tag.removeChild(vehicle)
-        Vehicle.tags.splice(index,1)
+       
     
     }
 
+    // Removes all the vehicles from the DOM
     removeAllVehicles(){
         
-        //Vehicle.all = []
-        Vehicle.tags.forEach(tag => this.removeVehicle)
+        console.log('removing all vehicles: ', Vehicle.tags)
+        Vehicle.tags.forEach((tag, index) => this.removeVehicle(tag, index), this)
         Vehicle.tags = []
     
     }

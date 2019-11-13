@@ -1,5 +1,4 @@
 class Vehicle{
-
     
 }
 Vehicle.tags = []

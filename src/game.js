@@ -6,7 +6,6 @@ const VEHICLE_MOVE_INC = 10 // in px
 let moveCarInterval
 let addCarInterval 
 let freezeInterval
-let countsDownInterval
 
 class Game{
 
@@ -23,24 +22,25 @@ class Game{
     }
 
     // handles all key presses (arrows and space bar)
-    static keyDownHandler(e) {
+    keyDownHandler = (e) => {
 
         // IF THE GAME IS GOING
-        if(!paused){
+        if(!this.paused){
+          
             if (e.key === "ArrowLeft") {
-                this.frog.move("left");
+                this.frog.move("left", this.gameBoard)
                 this.checkForWinOrLoss()
             }
             if (e.key === "ArrowRight") {
-                this.frog.move("right");
+                this.frog.move("right", this.gameBoard);
                 this.checkForWinOrLoss()
             }
             if (e.key === "ArrowUp") {
-                this.frog.move("up");
+                this.frog.move("up", this.gameBoard);
                 this.checkForWinOrLoss()
             }
             if (e.key === "ArrowDown") {
-                this.frog.move("down");
+                this.frog.move("down", this.gameBoard);
                 this.checkForWinOrLoss()
             }
             if (e.keyCode === 32){ // SPACE BAR
@@ -49,46 +49,47 @@ class Game{
             }
         }else{ // IF THE GAME IS PAUSED
             
+    
             // If User Hits Enter
             if(e.keyCode === 13 ){
-
-                GameBoard.lifeOverlay.style.display = "none"
-                GameBoard.spacebarOverlay.style.display = "block"
-                Game.locked = false
+             
+                this.gameBoard.lifeOverlay.style.display = "none"
+                this.gameBoard.spacebarOverlay.style.display = "block"
+                this.locked = false
 
             }
 
             //hit spacebar
-            if (e.keyCode === 32 && !locked){
+            if (e.keyCode === 32 && !this.locked){
     
                 this.paused = !this.paused
-                GameBoard.pauseOverlay.style.display = "none"
-                GameBoard.startOverlay.style.display = "none"
-                GameBoard.spacebarOverlay.style.display = "none"
+                this.gameBoard.pauseOverlay.style.display = "none"
+                this.gameBoard.startOverlay.style.display = "none"
+                this.gameBoard.spacebarOverlay.style.display = "none"
                 
                 //Set the car move interval
                 moveCarInterval = setInterval(this.moveCars, CAR_MOVE_TIME)
                 
                 //Set the add car interval
-                addCarInterval = setInterval(this.getCar, CAR_ADD_TIME)
+                addCarInterval = setInterval(this.getACar, CAR_ADD_TIME)
                 
                 if(this.firstGo){
                   
                     this.firstGo = false
                     this.count = 3;
 
-                    document.removeEventListener("keydown", keyDownHandler)
-                   
+                    document.removeEventListener("keydown", this.keyDownHandler)
                     
                     //make the three visivle
-                    GameBoard.countdownOverlay.innerText =  count;
-                    GameBoard.countdownOverlay.style.display = "block";
+                    this.gameBoard.countdownOverlay.innerText =  this.count;
+                    this.gameBoard.countdownOverlay.style.display = "block";
                   
                     //set an interval for 1 second to change innerHTML
-                    GameBoard.countDownInterval = setInterval(this.changeCount, 1000)
+
+                    this.gameBoard.setCountDown()
 
                     //set interval to start the listener after the 3 seconds
-                    freezeInterval = setInterval(addListener, 4000)
+                    freezeInterval = setInterval(this.addListener, 4000)
                     
                 }
                 
@@ -98,15 +99,28 @@ class Game{
         
     }
 
+    // adds the keydown listener to the document
+    addListener =()=>{
+  
+        document.addEventListener("keydown", this.keyDownHandler)
+        clearInterval(freezeInterval)
+    }
+
+    // ================================  CAR STUFF =======================================================
+    getACar = () =>{
+        ApiConnector.getCar(this)
+    }
+
     // Moves all the cars by one increment. Set with an interval
-     moveCars(){
+    moveCars = () =>{
         Vehicle.tags.forEach((vehicle, index) => {
             let left = parseInt(vehicle.style.left.replace("px", ""))
             if(vehicle.dataset.dir === "east"){
-                if (left < WIDTH + 20) {
+                if (left < this.gameBoard.WIDTH + 20) {
                     vehicle.style.left = `${left + VEHICLE_MOVE_INC}px`;
                 }else{
                     this.gameBoard.removeVehicle(vehicle, index)
+                    Vehicle.tags.splice(index,1)
                 }
               
             }else {
@@ -114,32 +128,41 @@ class Game{
                     vehicle.style.left = `${left - VEHICLE_MOVE_INC}px`;
                 }else{
                     this.gameBoard.removeVehicle(vehicle, index)
+                    Vehicle.tags.splice(index,1)
                 }
             }
-            this.checkConflict(vehicle) // was checkThisVehicle
+            this.checkConflict(vehicle) 
         })
         
     }
 
+    // =====================================  Game Instance Stuff =========================================================
+
+    // Set the level
     setLevel(level){
         this.level = level
         this.CAR_MOVE_TIME = CAR_MOVE_TIME - this.level * 50//= 200 // in ms
         this.CAR_ADD_TIME = CAR_ADD_TIME - this.level * 200//= 1000 // in ms
     }
 
+    // Set the frog avatar
     setFrog(avatar){
         this.frog.avatar = avatar
         this.frog.tag.innerText = avatar
         this.gameBoard.resetFrog(this.frog)
     }
 
+    // Set the prize 
     setPrize(avatar){
         this.prize.avatar = avatar
         this.prize.tag.innerText = avatar
-        this.prize.randomLocation(this.gameBoard)
+        this.gameBoard.placePrize(this.prize)
     }
 
 
+    //================================  PAUSE AND GO AND SETUP =========================================================
+
+    // Stop all the cars moving and being added
     stopTheCars(){
         //remove the car mover listeners
         clearInterval(moveCarInterval)
@@ -147,67 +170,20 @@ class Game{
 
     }
 
+    // Pause the game
     pause(){
-        paused = !paused
-        Game.stopTheCars()
-        GameBoard.pauseOverlay.style.display = "block"
-    }
-
-    // adds the keydown listener to the document
-    addListener(){
-        console.log("adding Event Listener")
-        document.addEventListener("keydown", this.keyDownHandler)
-        clearInterval(freezeInterval)
-    }
-
-    changeCount(){
-        count--
-        if(count === 0 ){
-            GameBoard.countDownTag.innerText = "GO!"
-        }else if(count === -1){
-            GameBoard.countDownTag.style.display = "none"
-            clearInterval(countDownInterval)
-        }else{
-            GameBoard.countDownTag.innerText = count
-        }
-    }
-
-    frogHit(){
-
-        if(Game.lives <= 1){
-
-            //display that you died
-            GameBoard.deathOverlay.style.display="block"
-            this.stopTheCars()
-            document.removeEventListener("keydown", this.keyDownHandler)
-
-            // reset the game (reload page) in 4 seconds
-            reloadInterval = setInterval(this.resetGame, 4000)
-
-        }else{
-        
-            let span = GameBoard.lifeOverlay.getElementsByTagName("span")[0]
-            span.innerText = `Lives remaining: ${Game.lives - 1}`
-            GameBoard.lifeOverlay.style.display="block"
-  
-            this.resetDOM()
-        }
-    }
-    
-
-    youWin(){
+        this.paused = !this.paused
         this.stopTheCars()
-
-        document.removeEventListener("keydown", this.keyDownHandler)
-        GameBoard.winOverlay.style.display = "block"
-
+        this.gameBoard.pauseOverlay.style.display = "block"
     }
 
+    // Reload the page after game over
     resetGame(){
         location.reload()
     }
 
-    resetDOM(){
+    // Reset cars and decrease lives, reset game
+    setupNextLife(){
         this.paused = true;
         this.firstGo= true;
         this.locked = true;
@@ -223,12 +199,48 @@ class Game{
 
     }
 
-    checkForWinOrLoss(){
+    //====================================== FROG CONFLICT STUFF ==============================================================
+
+    // When frog is hit by a car
+    frogHit(){
+
+        if(this.lives <= 1){
+
+            //display that you died
+            this.gameBoard.deathOverlay.style.display="block"
+            this.stopTheCars()
+            document.removeEventListener("keydown", this.keyDownHandler)
+
+            // reset the game (reload page) in 4 seconds
+            reloadInterval = setInterval(this.resetGame, 4000)
+
+        }else{
+        
+            let span = this.gameBoard.lifeOverlay.getElementsByTagName("span")[0]
+            span.innerText = `Lives remaining: ${this.lives - 1}`
+            this.gameBoard.lifeOverlay.style.display="block"
+  
+            this.setupNextLife()
+        }
+    }
+
+    // Show the win overlay
+    youWin(){
+        this.stopTheCars()
+
+        document.removeEventListener("keydown", this.keyDownHandler)
+        this.gameBoard.winOverlay.style.display = "block"
+
+    }
+
+    // Check conflict against prize and cars
+    checkForWinOrLoss = ()=>{
         this.checkConflict(this.prize.tag, "win")
-        Vehicle.tags.forEach(this.checkConflict)
+        Vehicle.tags.forEach(vehicle => this.checkConflict(vehicle), this)
     }
 
 
+    // check conflict between this.frog and given tag
     checkConflict(itemTag, result = "lose"){
 
         let buffer = 7
@@ -239,9 +251,9 @@ class Game{
         let frogYMin = frogYMax - this.frog.tag.offsetHeight + 2*buffer
 
         let itemXMin = parseInt(itemTag.style.left.replace("px", "")) + buffer
-        itemXMax = itemXMin + itemTag.offsetWidth - 2*buffer
-        itemYMax = parseInt(itemTag.style.top.replace("px", "")) - buffer
-        itemYMin = itemYMax - itemTag.offsetHeight + 2*buffer
+        let itemXMax = itemXMin + itemTag.offsetWidth - 2*buffer
+        let itemYMax = parseInt(itemTag.style.top.replace("px", "")) - buffer
+        let itemYMin = itemYMax - itemTag.offsetHeight + 2*buffer
 
         if(itemXMin > frogXMin && itemXMin < frogXMax || itemXMax > frogXMin && itemXMax < frogXMax){
             if(itemYMin > frogYMin && itemYMin < frogYMax || itemYMax > frogYMin && itemYMax < frogYMax){
@@ -255,4 +267,6 @@ class Game{
             }
         }
     }
-}
+
+
+} // END OF GAME CLASS
