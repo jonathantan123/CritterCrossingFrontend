@@ -56,6 +56,18 @@ body {
     position: relative;
 }
 
+.level{
+    width: 200px;
+}
+
+.avatar-list{
+    width: 200px;
+}
+
+.btn{
+    width: 200px;
+}
+
 
 img {
     width: 100%;

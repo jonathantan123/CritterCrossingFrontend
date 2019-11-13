@@ -40,13 +40,19 @@ class GameBoard{
     buildDropDown(frogs) {
         let formTag = document.getElementById("form")
         let avatarList = document.createElement("select")
-   
+        avatarList.className = "avatar-list"
+        let submitDiv = document.getElementsByClassName("select-div")[0]
+        
+        // add placeholder / prompt
+        avatarList.appendChild(new Option ("CHOOSE YOUR SPRITE...", ""))
+        avatarList.options[0].disabled = true
+
         frogs.forEach((frog)=>{
            
             avatarList.appendChild(new Option (`${frog.avatar}`, frog.id))
         })
 
-        formTag.appendChild(avatarList)
+        formTag.insertBefore(avatarList, submitDiv)
         
         formTag.addEventListener("submit", this.formSubmitHandler)
 
@@ -56,6 +62,7 @@ class GameBoard{
     setCountDown(){
         countDownInterval = setInterval(this.changeCount, 1000)
     }
+
 
     // Increments the countdown
     changeCount = () =>{

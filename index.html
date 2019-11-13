@@ -28,12 +28,17 @@
       <img id= "game-board"src="./img/gameboard.png">
       <div id="form-overlay">
         <form id="form">
-          <select>Level
-              <option value="1">1</option>
-              <option value="2">2</option>
-              <option value="3">3</option>
-          </select>
-          <input type="submit">START!</input>
+          <div class="select-div"> 
+            <select class="level">
+                <option value="" disabled selected>CHOOSE YOUR LEVEL...</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+            </select>
+          </div>
+          <div class="submit-div">
+            <input type="submit" value="START!" class="btn"></input>
+          </div>
         </form>
       </div>
       <div id="frog" ></div>
