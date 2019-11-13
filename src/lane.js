@@ -1,5 +1,4 @@
 class Lane{
 
-
 }
 Lane.all = []

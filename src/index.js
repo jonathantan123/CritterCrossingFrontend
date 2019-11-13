@@ -1,9 +1,12 @@
 document.addEventListener("DOMContentLoaded", ()=>{
 
-    ApiConnector.fetchAllFrogs()
-   
+    let game = new Game()
+    ApiConnector.fetchAllFrogs(game)
 
 }) // END DOM LISTENER
+
+
+
 
 
 

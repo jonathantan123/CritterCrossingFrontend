@@ -1,20 +1,39 @@
 class GameBoard{
 
-    static formSubmitHandler(e){
+    constructor(game){
+        this.tag = document.getElementById("game-holder")
+        this.game = game
+
+        //DIMENSIONS
+        this.WIDTH = this.tag.offsetWidth
+        this.HEIGHT = this.tag.offsetHeight
+        this.LEFT_EDGE = 0
+        this.RIGHT_EDGE = this.WIDTH
+        this.BOTTOM_EDGE = this.HEIGHT
+        this.TOP_EDGE =  0
+
+        // HTML overlays and tags
+        this.countdownOverlay = document.getElementById("three-count")
+        this.pauseOverlay = document.getElementById("pause-display")
+        this.deathOverlay = document.getElementById("death-overlay")
+        this.lifeOverlay = document.getElementById("lives-overlay")
+        this.startOverlay = document.getElementById("start-overlay")
+        this.winOverlay = document.getElementById("win-overlay")
+        this.formOverlay =document.getElementById("form-overlay")
+        this.spacebarOverlay = document.getElementById("spacebar-overlay") 
+    }
+
+    formSubmitHandler = (e) => {
         e.preventDefault()
-
-        level = parseInt(e.target[0].value)
-
-        CAR_MOVE_TIME = CAR_MOVE_TIME - level * 50//= 200 // in ms
-        CAR_ADD_TIME = CAR_ADD_TIME - level * 200//= 1000 // in ms
+        this.game.setLevel(parseInt(e.target[0].value))
 
         let id = e.target[2].value
 
-        ApiConnector.getAvatar(id)
-        ApiConnector.getLanes() 
+        ApiConnector.getAvatar(this.game, id)
+        ApiConnector.getLanes(this.game) 
     }
 
-    static dropDown(frogs) {
+    buildDropDown(frogs) {
         let formTag = document.getElementById("form")
         let avatarList = document.createElement("select")
    
@@ -25,39 +44,57 @@ class GameBoard{
 
         formTag.appendChild(avatarList)
         
-        formTag.addEventListener("submit", formSubmitHandler)
+        formTag.addEventListener("submit", this.formSubmitHandler)
 
     }
 
-    static removeVehicle(vehicle){
-        GameBoard.tag.removeChild(vehicle)
+    // appends a vehicle to the dom in the given lane
+    appendCar(vehicle, lane){
+
+        // add to the vehicle storage array
+        Vehicle.tags.push(vehicle)
+
+        let y_coord = this.BOTTOM_EDGE - lane.height*40 - 20
+        let x_coord
+
+        this.tag.appendChild(vehicle)
+
+        if(lane.direction === "east"){
+            x_coord = -60
+            vehicle.style.transform = 'rotate(180deg)';
+        }else{
+            x_coord = this.WIDTH + 5
+        }
+
+        vehicle.style.left = `${x_coord}px`
+        vehicle.style.top = `${y_coord}px`
+
+    }
+
+    resetFrog(frog){
+        frog.tag.style.top = `${this.BOTTOM_EDGE - 27}px`
+        frog.tag.style.left = `${this.RIGHT_EDGE/2}px`
+ 
+        console.log("putting frog at: (", frog.tag.style.left, ", ", frog.tag.style.top, ")" )
+
+    }
+
+
+    removeVehicle(vehicle, index){
+        this.tag.removeChild(vehicle)
+        Vehicle.tags.splice(index,1)
     
     }
 
-    static addVehicle(vehicle){
-        GameBoard.tag.appendChild(vehicle)
+    removeAllVehicles(){
+        
+        //Vehicle.all = []
+        Vehicle.tags.forEach(tag => this.removeVehicle)
+        Vehicle.tags = []
+    
     }
 
 }
-GameBoard.tag = document.getElementById("game-holder")
-console.log(document)
-
-console.log(document.getElementById("game-holder"))
 
 
-//DIMENSIONS
-GameBoard.WIDTH = GameBoard.tag.offsetWidth
-GameBoard.LEFT_EDGE = 0
-GameBoard.RIGHT_EDGE = WIDTH
-GameBoard.BOTTOM_EDGE = GameBoard.tag.offsetHeight
-GameBoard.TOP_EDGE =  0
 
-// HTML overlays and tags
-GameBoard.countdownOverlay = document.getElementById("three-count")
-GameBoard.pauseOverlay = document.getElementById("pause-display")
-GameBoard.deathOverlay = document.getElementById("death-overlay")
-GameBoard.lifeOverlay = document.getElementById("lives-overlay")
-GameBoard.startOverlay = document.getElementById("start-overlay")
-GameBoard.winOverlay = document.getElementById("win-overlay")
-GameBoard.formOverlayTag =document.getElementById("form-overlay")
-GameBoard.spacebarOverlay = document.getElementById("spacebar-overlay") 
