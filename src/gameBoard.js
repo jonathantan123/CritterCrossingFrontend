@@ -6,6 +6,7 @@ class GameBoard{
         this.tag = document.getElementById("game-holder")
         this.game = game
 
+        
         //DIMENSIONS
         this.WIDTH = this.tag.offsetWidth
         this.HEIGHT = this.tag.offsetHeight
@@ -13,6 +14,31 @@ class GameBoard{
         this.RIGHT_EDGE = this.WIDTH
         this.BOTTOM_EDGE = this.HEIGHT
         this.TOP_EDGE =  0
+
+        this.winStrip = document.getElementById("winStrip")
+        this.winStrip.style.top = 0
+        this.winStrip.style.height = `${this.HEIGHT * .070}px`
+        this.winStrip.style.left = "0px"
+        this.winStrip.style.width = `${this.WIDTH -4}px`
+
+        this.riverTag = document.getElementById("river")
+        this.riverTag.style.height = `${this.HEIGHT * .23}px`
+        this.riverTag.style.top = `${this.HEIGHT * .090}px`
+        this.riverTag.style.left = "0px"
+        this.riverTag.style.width = `${this.WIDTH -4}px`
+        
+        // let t = document.createElement("span")
+        // let b = document.createElement("span")
+        // t.className=  "vehicle"
+        // b.className = "vehicle"
+        // t.style.left = "180px"
+        // b.style.left = "180px"
+        // t.style.top = `${this.riverTop}px`
+        // b.style.top = `${this.riverBottom}px`
+        // t.innerText = "_________"
+        // b.innerText = "_________"
+        // this.tag.append(t,b)
+
 
         // HTML overlays and tags
         this.countdownOverlay = document.getElementById("three-count")
@@ -27,13 +53,14 @@ class GameBoard{
 
     // On starting form submit, fetch the avatar
     formSubmitHandler = (e) => {
+        console.dir(e.target)
         e.preventDefault()
-        this.game.setLevel(parseInt(e.target[0].value))
+        this.game.setLevel(parseInt(e.target[1].value))
 
-        let id = e.target[2].value
+        let id = e.target[0].value
 
-        ApiConnector.getAvatar(this.game, id)
-        ApiConnector.getLanes(this.game) 
+        Adapter.getAvatar(this.game, id)
+        Adapter.getLanes(this.game) 
     }
 
     // Builds the avatar dropDown menu
@@ -42,13 +69,8 @@ class GameBoard{
         let avatarList = document.createElement("select")
         avatarList.className = "avatar-list"
         let submitDiv = document.getElementsByClassName("select-div")[0]
-        
-        // add placeholder / prompt
-        avatarList.appendChild(new Option ("CHOOSE YOUR SPRITE...", ""))
-        avatarList.options[0].disabled = true
 
         frogs.forEach((frog)=>{
-           
             avatarList.appendChild(new Option (`${frog.avatar}`, frog.id))
         })
 
@@ -114,10 +136,7 @@ class GameBoard{
 
     // Removes a given vehicle from the DOM
     removeVehicle = (vehicle, index)=>{
-        console.log("removing vehicle at index ", index)
         this.tag.removeChild(vehicle)
-       
-    
     }
 
     // Removes all the vehicles from the DOM
@@ -128,6 +147,54 @@ class GameBoard{
         Vehicle.tags = []
     
     }
+
+    addLog(lane = undefined){  
+        if(lane === undefined){
+            let index = Math.floor(Math.random() * 4) +  5
+            lane = Lane.all[index]
+
+        }
+        let log = document.createElement("img")
+        let y_coord = this.BOTTOM_EDGE -  243 - (lane.height - 4) * 20
+        let x_coord
+
+        log.dataset.dir = lane.direction
+        log.className = "log"
+        log.src = "./img/log.png"
+
+        this.tag.appendChild(log)
+
+        if(lane.direction === "east"){
+            x_coord = -70
+            log.style.transform = 'rotate(180deg)';
+        }else{
+            x_coord = this.WIDTH + 10
+
+        }
+
+        // Set the log's location
+        log.style.left = `${x_coord}px`
+        log.style.top = `${y_coord}px`
+        
+        //Add this to the array of all logs
+        Log.tags.push(log)
+        
+    }
+
+     // Removes a given vehicle from the DOM
+     removeLog = (log)=>{
+        this.tag.removeChild(log)
+    }
+
+    removeAllLogs(){
+       
+        Log.tags.forEach((tag, index) => this.removeLog(tag, index), this)
+        Log.tags = []
+    
+    }
+
+
+
 
 }
 

@@ -2,7 +2,6 @@ class Prize{
 
     constructor(avatar){
         this.tag = document.getElementById("prize")
-    
     }
 
     // Sets the location on the DOM 

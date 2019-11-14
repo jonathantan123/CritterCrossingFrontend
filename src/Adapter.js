@@ -3,7 +3,7 @@ const FROG_URL = "/frogs"
 const VEHICLE_URL = "/vehicles"
 const LANE_URL = "/lanes"
 
-class ApiConnector{
+class Adapter{
 
     // Fetches a random car from the api to add to the given or a random lane
     static getCar(game, lane = Lane.all[Math.floor(Math.random()*5)]){
@@ -18,6 +18,8 @@ class ApiConnector{
                 vehicleTag.className = "vehicle"
                 vehicleTag.src = thisVehicle.avatar
                 vehicleTag.dataset.dir = lane.direction
+
+                // Add this tag to the game board (which will add the the Vehicle tags array) 
                 game.gameBoard.appendCar(vehicleTag, lane)
                 
                 
@@ -31,13 +33,15 @@ class ApiConnector{
         Vehicle.tags = []
        
         Lane.all.forEach(lane => {
-            //get one car
-            ApiConnector.getCar(game, lane)
+            if (lane.height > 5) {
+                game.gameBoard.addLog(lane)
+            }else{
+                Adapter.getCar(game, lane)
+            }
             
         })
 
     }
-
     
     static getLanes(game){
         fetch(`${BASE_URL}${LANE_URL}`)
@@ -46,7 +50,7 @@ class ApiConnector{
                 Lane.all = data
             
                  //load initial cars
-                ApiConnector.getStartingCars(game)
+                Adapter.getStartingCars(game)
             })
     
     }
@@ -56,14 +60,8 @@ class ApiConnector{
             .then(resp => resp.json())
             .then(data => {
              
+                console.log("the avatar is", data.avatar)
                 game.setFrog(data.avatar)
-                // Frog.avatar = data.avatar
-                // Frog.prize = data.prize
-
-                // // put the froggo on the page
-                // Frog.setAvatar(data.avatar)
-                
-                // Frog.reset()
               
                 //Hide the form
                 game.gameBoard.formOverlay.style.display = "none"

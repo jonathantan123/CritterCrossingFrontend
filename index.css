@@ -12,6 +12,11 @@ body {
     width: 60px
 }
 
+.log{
+    position: absolute;
+    height: 6.5%;
+    width: 12%;
+}
 
 .header{
 
@@ -68,6 +73,10 @@ body {
     width: 200px;
 }
 
+#winStrip{
+    position: absolute;
+}
+
 
 img {
     width: 100%;
@@ -75,11 +84,17 @@ img {
     z-index: 0;
 }
 #frog {
-  
+    color: hotpink;
     font-size: 25px;
     position: absolute;
     z-index: 1;
+    height: 7%;
 }
+
+#river{
+    position: absolute;
+}
+
 
 #prize {
   

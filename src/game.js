@@ -1,11 +1,17 @@
-let CAR_MOVE_TIME = 175// in ms
-let CAR_ADD_TIME = 800  // in ms
+let CAR_MOVE_TIME = 1000 //175// in ms
+let CAR_ADD_TIME = 20000 // 800  // in ms
+let LOG_MOVE_TIME = 175
+let LOG_ADD_TIME = 2000
 const VEHICLE_MOVE_INC = 10 // in px
+const LOG_MOVE_INC = 10 // in px
 
  //intervals
 let moveCarInterval
 let addCarInterval 
+let moveLogInterval
+let addLogInterval
 let freezeInterval
+let reloadInterval
 
 class Game{
 
@@ -69,9 +75,11 @@ class Game{
                 
                 //Set the car move interval
                 moveCarInterval = setInterval(this.moveCars, CAR_MOVE_TIME)
+                moveLogInterval = setInterval(this.moveLogs, LOG_MOVE_TIME)
                 
                 //Set the add car interval
                 addCarInterval = setInterval(this.getACar, CAR_ADD_TIME)
+                addLogInterval = setInterval(this.getALog, LOG_ADD_TIME)
                 
                 if(this.firstGo){
                   
@@ -101,14 +109,16 @@ class Game{
 
     // adds the keydown listener to the document
     addListener =()=>{
-  
         document.addEventListener("keydown", this.keyDownHandler)
         clearInterval(freezeInterval)
     }
 
     // ================================  CAR STUFF =======================================================
     getACar = () =>{
-        ApiConnector.getCar(this)
+        Adapter.getCar(this)
+    }
+    getALog = () =>{
+        this.gameBoard.addLog()
     }
 
     // Moves all the cars by one increment. Set with an interval
@@ -117,7 +127,7 @@ class Game{
             let left = parseInt(vehicle.style.left.replace("px", ""))
             if(vehicle.dataset.dir === "east"){
                 if (left < this.gameBoard.WIDTH + 20) {
-                    vehicle.style.left = `${left + VEHICLE_MOVE_INC}px`;
+                    vehicle.style.left = `${left + LOG_MOVE_INC}px`;
                 }else{
                     this.gameBoard.removeVehicle(vehicle, index)
                     Vehicle.tags.splice(index,1)
@@ -125,7 +135,7 @@ class Game{
               
             }else {
                 if (left > -80) {
-                    vehicle.style.left = `${left - VEHICLE_MOVE_INC}px`;
+                    vehicle.style.left = `${left - LOG_MOVE_INC}px`;
                 }else{
                     this.gameBoard.removeVehicle(vehicle, index)
                     Vehicle.tags.splice(index,1)
@@ -134,6 +144,45 @@ class Game{
             this.checkConflict(vehicle) 
         })
         
+    }
+
+
+    moveLogs = () => {
+        Log.tags.forEach((log, index) => {
+            let moveFrog = false
+            if(this.frog.onLog && this.frog.log === log){
+                moveFrog = true;
+                console.log("THAT FROG IS ON A LOG")
+            }
+
+            let left = parseInt(log.style.left.replace("px", ""))
+
+            if(log.dataset.dir === "east"){
+                if (left < this.gameBoard.WIDTH + 10) {
+                    log.style.left = `${left + LOG_MOVE_INC}px`;
+                    if(moveFrog){
+                        this.frog.move("right", this.gameBoard, LOG_MOVE_INC)
+                    }
+                }else{
+                    //remove it from DOM and Logs array
+                    Log.tags.splice(index,1)
+                    this.gameBoard.removeLog(log)
+                }     
+            }else {
+                if (left > -70) {
+                    log.style.left = `${left - LOG_MOVE_INC}px`;
+                    if(moveFrog){
+                        this.frog.move("left", this.gameBoard, LOG_MOVE_INC)
+                    }
+                }else{
+                    
+                    //remove it from DOM and Logs array
+                    Log.tags.splice(index,1)
+                    this.gameBoard.removeLog(log)
+               
+                }
+            }
+        })
     }
 
     // =====================================  Game Instance Stuff =========================================================
@@ -166,7 +215,9 @@ class Game{
     stopTheCars(){
         //remove the car mover listeners
         clearInterval(moveCarInterval)
+        clearInterval(moveLogInterval)
         clearInterval(addCarInterval)
+        clearInterval(addLogInterval)
 
     }
 
@@ -195,7 +246,8 @@ class Game{
         this.gameBoard.resetFrog(this.frog)
         
         this.gameBoard.removeAllVehicles()
-        ApiConnector.getStartingCars(this)
+        this.gameBoard.removeAllLogs()
+        Adapter.getStartingCars(this)
 
     }
 
@@ -233,35 +285,87 @@ class Game{
 
     }
 
+    checkForLog(){
+        if(this.frog.onLog){
+
+            this.frog.onLog = false
+            //see if it just hopped off the log
+            Log.tags.forEach(log => {
+                this.checkConflict(log)
+            })
+            if(!this.frog.onLog){
+                console.log("YOU LEFT THE LOG")
+            }
+
+        }else{ // see if it just hopped onto a log
+            Log.tags.forEach(log => {
+                this.checkConflict(log)
+            })
+        }
+    }
+
     // Check conflict against prize and cars
     checkForWinOrLoss = ()=>{
-        this.checkConflict(this.prize.tag, "win")
+        this.checkForLog()
+       // this.checkConflict(this.gameBoard.winStrip)
+        this.checkConflict(this.prize.tag)
+        this.checkConflict(this.gameBoard.riverTag)
         Vehicle.tags.forEach(vehicle => this.checkConflict(vehicle), this)
     }
 
 
     // check conflict between this.frog and given tag
-    checkConflict(itemTag, result = "lose"){
-
-        let buffer = 7
+    checkConflict(itemTag){
         
-        let frogXMin = parseInt(this.frog.tag.style.left.replace("px", "")) + buffer
-        let frogXMax = frogXMin + this.frog.tag.offsetWidth - 2*buffer
-        let frogYMax = parseInt(this.frog.tag.style.top.replace("px", "")) - buffer
-        let frogYMin = frogYMax - this.frog.tag.offsetHeight + 2*buffer
+        let buffer = 7
+        let frogBuffer = 9;
+        if(itemTag.className === "log"){
+            buffer = 3
+        }
+        // else if(itemTag.id === "winStrip"){
+        //     buffer = -5
+        // }
+        
+        
+        let frogXMin = parseInt(this.frog.tag.style.left.replace("px", "")) +frogBuffer 
+        let frogXMax = frogXMin + this.frog.tag.offsetWidth - 2*frogBuffer
+        let frogYMin = parseInt(this.frog.tag.style.top.replace("px", "")) + frogBuffer 
+        let frogYMax = frogYMin + this.frog.tag.offsetHeight - 2*frogBuffer
 
         let itemXMin = parseInt(itemTag.style.left.replace("px", "")) + buffer
         let itemXMax = itemXMin + itemTag.offsetWidth - 2*buffer
-        let itemYMax = parseInt(itemTag.style.top.replace("px", "")) - buffer
-        let itemYMin = itemYMax - itemTag.offsetHeight + 2*buffer
+        let itemYMin = parseInt(itemTag.style.top.replace("px", "")) + buffer
+        let itemYMax = itemYMin + itemTag.offsetHeight - 2*buffer
 
-        if(itemXMin > frogXMin && itemXMin < frogXMax || itemXMax > frogXMin && itemXMax < frogXMax){
-            if(itemYMin > frogYMin && itemYMin < frogYMax || itemYMax > frogYMin && itemYMax < frogYMax){
+        // CHECK IF FROG OVERLAPS
+        if(frogXMin > itemXMin && frogXMin < itemXMax || frogXMax > itemXMin && frogXMax < itemXMax){
+            if(frogYMin > itemYMin && frogYMin < itemYMax || frogYMax  > itemYMin && frogYMax < itemYMax){
                 
-                if(result === "win"){
+                // we're comaparing to log so you're safe
+                if (itemTag.className === "log"){
+                    console.log("YOU'RE ON A LOG!")
+                    this.frog.onLog = true;
+                    this.frog.log = itemTag
+               
+                // We're comparing to the prize so you win
+                // }else if(itemTag.id === "winStrip"){
+                //     console.log("YA ON THE WIN STRIP")
+                //     this.frog.onLog = false
+                //     //this.frog.onWinStrip = true
+
+                }else if(itemTag.id === "prize"){
+                    console.log("YOU HIT THE PRIZE")
                     this.youWin()
 
-                }else{
+                // you hit river
+                }else if(itemTag.id === "river"){
+                    if(!this.frog.onLog ){//&& !this.frog.onWinStrip){
+                        console.log("YOU ARE ON THE RIVER AND NOT ON A LOG")
+                        this.frogHit()
+                    }
+
+                }else{ // hit a car
+                    console.log("YOU HIT A VEHICLE")
                     this.frogHit()
                 }  
             }
