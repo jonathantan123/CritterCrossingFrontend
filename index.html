@@ -19,8 +19,12 @@
   <title>TOADER</title>
 </head>
 <body>
-  <div class = "header">HEADER</div>
-  
+  <div class = "header">
+    <div class="headerItem" id= "level"></div>
+    <div class="headerTitle" id= "level">TOADALICIOUS</div>
+    <div class="headerItem" id= "lives"></div>
+  </div>
+
   <div class="main">
 
     <div class="edges"></div>
@@ -31,12 +35,6 @@
         <form id="form">
           <lable>AVATAR:</lable>
           <div class="select-div"> 
-            <lable id="levelLabel">LEVEL:</lable>
-            <select class="level">
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-            </select>
           </div>
           <div class="submit-div">
             <input type="submit" value="START!" class="btn"></input>
@@ -45,22 +43,23 @@
       </div>
       <div id="frog" ></div>
       <div id="prize" ></div>
-      <div id="death-overlay"> GAME OVER, IDIOT! </div>
-      <div id="win-overlay"> YOU WONNNNNNN! </div>
-      <div id="river"></div>
-      <div id="winStrip"></div>
-      <div id="start-overlay"> 
-          <h2>GOAL: Get across the road and the river to your prize!</h2>
-          <h2>Use the arrow keys to move left, right, up, down</h2>
-          <h2>DON'T GET HIT!</h2>
-          <h2>You have 3 lives...</h2>
-          <h1>READY TO GO?</h1>
+      <div class = "overlay" id="death-overlay"> GAME OVER, IDIOT! </div>
+      <div class = "overlay" id="win-overlay"> YOU WONNNNNNN! </div>
+      <div  id="river"></div>
+      <div  id="winStrip"></div>
+      <div class = "overlay" id="start-overlay"> 
+          <h1>GOAL: Get across the road and the river to your prize!</h1>
+          <h3>Use the arrow keys to move left, right, up, down</h3>
           <h3>Hit the space to start or pause</h3>
+          <h1>DON'T GET HIT!</h1>
+          <h3>You have 3 lives...</h3>
+          <h2>READY TO GO? Hit the spacebar to begin!</h2>
+          <h3></h3>
       </div>
-      <div id="spacebar-overlay"> PRESS THE SPACE BAR TO START </div>
-      <div id="lives-overlay"> YA DIED, BITCH! <span></span></br> HIT ENTER TO CONTINUE</div>
+      <div class = "overlay" id="spacebar-overlay"> PRESS THE SPACE BAR TO START </div>
+      <div class = "overlay" id="lives-overlay"> <h1>YA DIED, BITCH!</h1> <h2><span></span></h2></div>
       <div id="three-count" > 3 </div>
-      <div id="pause-display" > PAUSED </div>
+      <div class = "overlay" id="pause-overlay" > <h1>PAUSED </h1></div>
     </div>
 
     <div class="edges"></div>

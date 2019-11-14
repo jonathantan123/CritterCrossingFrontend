@@ -26,36 +26,27 @@ class GameBoard{
         this.riverTag.style.top = `${this.HEIGHT * .090}px`
         this.riverTag.style.left = "0px"
         this.riverTag.style.width = `${this.WIDTH -4}px`
-        
-        // let t = document.createElement("span")
-        // let b = document.createElement("span")
-        // t.className=  "vehicle"
-        // b.className = "vehicle"
-        // t.style.left = "180px"
-        // b.style.left = "180px"
-        // t.style.top = `${this.riverTop}px`
-        // b.style.top = `${this.riverBottom}px`
-        // t.innerText = "_________"
-        // b.innerText = "_________"
-        // this.tag.append(t,b)
-
+    
 
         // HTML overlays and tags
         this.countdownOverlay = document.getElementById("three-count")
-        this.pauseOverlay = document.getElementById("pause-display")
+        this.pauseOverlay = document.getElementById("pause-overlay")
         this.deathOverlay = document.getElementById("death-overlay")
         this.lifeOverlay = document.getElementById("lives-overlay")
         this.startOverlay = document.getElementById("start-overlay")
         this.winOverlay = document.getElementById("win-overlay")
         this.formOverlay =document.getElementById("form-overlay")
         this.spacebarOverlay = document.getElementById("spacebar-overlay") 
+        this.livesTag = document.getElementById("lives")
+        this.levelTag = document.getElementById("level")
     }
 
     // On starting form submit, fetch the avatar
     formSubmitHandler = (e) => {
         console.dir(e.target)
         e.preventDefault()
-        this.game.setLevel(parseInt(e.target[1].value))
+    
+        this.game.setLevel(1)
 
         let id = e.target[0].value
 
@@ -67,7 +58,7 @@ class GameBoard{
     buildDropDown(frogs) {
         let formTag = document.getElementById("form")
         let avatarList = document.createElement("select")
-        avatarList.className = "avatar-list"
+        avatarList.id = "avatar-list"
         let submitDiv = document.getElementsByClassName("select-div")[0]
 
         frogs.forEach((frog)=>{
@@ -97,6 +88,13 @@ class GameBoard{
         }else{
             this.countdownOverlay.innerText = this.game.count
         }
+    }
+
+    setLevel(level){
+        this.levelTag.innerText = `Level: ${level}`
+    }
+    setLives(lives){
+        this.livesTag.innerText = `Lives: ${lives}`
     }
 
     // Place the prize avatar on the DOM
@@ -149,14 +147,16 @@ class GameBoard{
     }
 
     addLog(lane = undefined){  
+        let random = false
         if(lane === undefined){
+            random = true
             let index = Math.floor(Math.random() * 4) +  5
             lane = Lane.all[index]
 
         }
         let log = document.createElement("img")
         let y_coord = this.BOTTOM_EDGE -  243 - (lane.height - 4) * 20
-        let x_coord
+        let x_coord 
 
         log.dataset.dir = lane.direction
         log.className = "log"
@@ -164,11 +164,12 @@ class GameBoard{
 
         this.tag.appendChild(log)
 
+        
         if(lane.direction === "east"){
-            x_coord = -70
+            x_coord = random? -70 : Math.random() * this.WIDTH  - 20 
             log.style.transform = 'rotate(180deg)';
         }else{
-            x_coord = this.WIDTH + 10
+            x_coord = random? this.WIDTH + 10 : Math.random() * this.WIDTH  - 20
 
         }
 

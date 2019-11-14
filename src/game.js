@@ -1,9 +1,9 @@
-let CAR_MOVE_TIME = 1000 //175// in ms
-let CAR_ADD_TIME = 20000 // 800  // in ms
-let LOG_MOVE_TIME = 175
-let LOG_ADD_TIME = 2000
-const VEHICLE_MOVE_INC = 10 // in px
-const LOG_MOVE_INC = 10 // in px
+// let CAR_MOVE_TIME =200 //= 175// in ms
+// let CAR_ADD_TIME= 800 //=  800  // in ms
+// let LOG_MOVE_TIME = 175
+// let LOG_ADD_TIME = 2000
+// const VEHICLE_MOVE_INC = 10 // in px
+// const LOG_MOVE_INC = 10 // in px
 
  //intervals
 let moveCarInterval
@@ -12,6 +12,8 @@ let moveLogInterval
 let addLogInterval
 let freezeInterval
 let reloadInterval
+let lifeInterval
+let winInterval
 
 class Game{
 
@@ -25,6 +27,13 @@ class Game{
         this.level = 1;
         this.count = 3;
         this.locked = false
+        this.CAR_MOVE_TIME = 200
+        this.CAR_ADD_TIME= 800 //=  800  // in ms
+        this.LOG_MOVE_TIME = 175
+        this.LOG_ADD_TIME = 2000
+        this.VEHICLE_MOVE_INC = 10 // in px
+        this.LOG_MOVE_INC = 10 // in px
+
     }
 
     // handles all key presses (arrows and space bar)
@@ -54,16 +63,6 @@ class Game{
                 this.pause()       
             }
         }else{ // IF THE GAME IS PAUSED
-            
-    
-            // If User Hits Enter
-            if(e.keyCode === 13 ){
-             
-                this.gameBoard.lifeOverlay.style.display = "none"
-                this.gameBoard.spacebarOverlay.style.display = "block"
-                this.locked = false
-
-            }
 
             //hit spacebar
             if (e.keyCode === 32 && !this.locked){
@@ -74,12 +73,13 @@ class Game{
                 this.gameBoard.spacebarOverlay.style.display = "none"
                 
                 //Set the car move interval
-                moveCarInterval = setInterval(this.moveCars, CAR_MOVE_TIME)
-                moveLogInterval = setInterval(this.moveLogs, LOG_MOVE_TIME)
+                console.log("setting moveCar interval")
+                moveCarInterval = setInterval(this.moveCars, this.CAR_MOVE_TIME)
+                moveLogInterval = setInterval(this.moveLogs, this.LOG_MOVE_TIME)
                 
                 //Set the add car interval
-                addCarInterval = setInterval(this.getACar, CAR_ADD_TIME)
-                addLogInterval = setInterval(this.getALog, LOG_ADD_TIME)
+                addCarInterval = setInterval(this.getACar, this.CAR_ADD_TIME)
+                addLogInterval = setInterval(this.getALog, this.LOG_ADD_TIME)
                 
                 if(this.firstGo){
                   
@@ -107,11 +107,7 @@ class Game{
         
     }
 
-    // adds the keydown listener to the document
-    addListener =()=>{
-        document.addEventListener("keydown", this.keyDownHandler)
-        clearInterval(freezeInterval)
-    }
+   
 
     // ================================  CAR STUFF =======================================================
     getACar = () =>{
@@ -127,7 +123,7 @@ class Game{
             let left = parseInt(vehicle.style.left.replace("px", ""))
             if(vehicle.dataset.dir === "east"){
                 if (left < this.gameBoard.WIDTH + 20) {
-                    vehicle.style.left = `${left + LOG_MOVE_INC}px`;
+                    vehicle.style.left = `${left + this.LOG_MOVE_INC}px`;
                 }else{
                     this.gameBoard.removeVehicle(vehicle, index)
                     Vehicle.tags.splice(index,1)
@@ -135,7 +131,7 @@ class Game{
               
             }else {
                 if (left > -80) {
-                    vehicle.style.left = `${left - LOG_MOVE_INC}px`;
+                    vehicle.style.left = `${left - this.LOG_MOVE_INC}px`;
                 }else{
                     this.gameBoard.removeVehicle(vehicle, index)
                     Vehicle.tags.splice(index,1)
@@ -159,9 +155,9 @@ class Game{
 
             if(log.dataset.dir === "east"){
                 if (left < this.gameBoard.WIDTH + 10) {
-                    log.style.left = `${left + LOG_MOVE_INC}px`;
+                    log.style.left = `${left + this.LOG_MOVE_INC}px`;
                     if(moveFrog){
-                        this.frog.move("right", this.gameBoard, LOG_MOVE_INC)
+                        this.frog.move("right", this.gameBoard, this.LOG_MOVE_INC)
                     }
                 }else{
                     //remove it from DOM and Logs array
@@ -170,9 +166,9 @@ class Game{
                 }     
             }else {
                 if (left > -70) {
-                    log.style.left = `${left - LOG_MOVE_INC}px`;
+                    log.style.left = `${left - this.LOG_MOVE_INC}px`;
                     if(moveFrog){
-                        this.frog.move("left", this.gameBoard, LOG_MOVE_INC)
+                        this.frog.move("left", this.gameBoard, this.LOG_MOVE_INC)
                     }
                 }else{
                     
@@ -189,9 +185,12 @@ class Game{
 
     // Set the level
     setLevel(level){
+        console.log("setting level")
         this.level = level
-        this.CAR_MOVE_TIME = CAR_MOVE_TIME - this.level * 50//= 200 // in ms
-        this.CAR_ADD_TIME = CAR_ADD_TIME - this.level * 200//= 1000 // in ms
+        this.CAR_MOVE_TIME = 175 - this.level * 50//= 200 // in ms
+        this.CAR_ADD_TIME = 1000 - this.level * 200//= 1000 // in ms
+        this.LOG_MOVE_TIME = 175 - this.level * 25//= 200 // in ms
+        this.LOG_ADD_TIME = 1000 + this.level * 100//= 1000 // in ms
     }
 
     // Set the frog avatar
@@ -207,7 +206,6 @@ class Game{
         this.prize.tag.innerText = avatar
         this.gameBoard.placePrize(this.prize)
     }
-
 
     //================================  PAUSE AND GO AND SETUP =========================================================
 
@@ -233,21 +231,59 @@ class Game{
         location.reload()
     }
 
+     // adds the keydown listener to the document
+     addListener =()=>{
+        document.addEventListener("keydown", this.keyDownHandler)
+        clearInterval(freezeInterval)
+    }
+
+    setChinaLevel(){
+       this.CAR_MOVE_TIME = 10 //ms
+       this.LOG_MOVE_TIME = 10
+       this.CAR_ADD_TIME = 10//ms
+       this.LOG_ADD_TIME = 10//ms
+       this.level = "CHINA"
+    }
+
     // Reset cars and decrease lives, reset game
     setupNextLife(){
         this.paused = true;
         this.firstGo= true;
-        this.locked = true;
+        //this.locked = true;
 
         this.stopTheCars()
 
         this.lives -= 1
 
         this.gameBoard.resetFrog(this.frog)
+        this.gameBoard.setLevel(this.level)
+        this.gameBoard.setLives(this.lives)
         
         this.gameBoard.removeAllVehicles()
         this.gameBoard.removeAllLogs()
         Adapter.getStartingCars(this)
+
+    }
+
+    removeLifeOverlay = () =>{
+
+        this.setupNextLife()
+
+        this.gameBoard.lifeOverlay.style.display="none"
+        this.gameBoard.spacebarOverlay.style.display = "block"
+
+        document.addEventListener("keydown", this.keyDownHandler)
+        clearInterval(lifeInterval)
+
+    }
+
+    removeWinOverlay = () => {
+        this.gameBoard.winOverlay.style.display = "none"
+        this.gameBoard.spacebarOverlay.style.display = "block"
+
+        document.addEventListener("keydown", this.keyDownHandler)
+
+        clearInterval(winInterval)
 
     }
 
@@ -267,12 +303,18 @@ class Game{
             reloadInterval = setInterval(this.resetGame, 4000)
 
         }else{
-        
+
+           
+            this.pause()
+            this.gameBoard.pauseOverlay.style.display = "none"
             let span = this.gameBoard.lifeOverlay.getElementsByTagName("span")[0]
             span.innerText = `Lives remaining: ${this.lives - 1}`
             this.gameBoard.lifeOverlay.style.display="block"
-  
-            this.setupNextLife()
+            document.removeEventListener("keydown", this.keyDownHandler)
+
+            lifeInterval = setInterval(this.removeLifeOverlay, 3000)
+            
+            // this.setupNextLife()
         }
     }
 
@@ -282,6 +324,21 @@ class Game{
 
         document.removeEventListener("keydown", this.keyDownHandler)
         this.gameBoard.winOverlay.style.display = "block"
+        winInterval = setInterval(this.removeWinOverlay, "3000")
+
+        if(this.level < 3){
+            console.log("moving on")
+            this.setLevel(this.level + 1)
+            this.setupNextLife()
+            this.lives = 3
+            this.gameBoard.setLives(this.lives)
+        } else if (this.level === 3){
+            this.setChinaLevel()
+            this.setupNextLife()
+            this.lives = 3
+            this.gameBoard.setLives(this.lives)
+
+        }
 
     }
 

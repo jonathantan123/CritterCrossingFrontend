@@ -67,6 +67,8 @@ class Adapter{
                 game.gameBoard.formOverlay.style.display = "none"
                 game.gameBoard.startOverlay.style.display = "block"
                 game.setPrize(data.prize)
+                game.gameBoard.setLevel(game.level)
+                game.gameBoard.setLives(game.lives)
                 game.addListener()
             })
         
