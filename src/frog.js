@@ -1,4 +1,4 @@
-const FROG_MOVE_INC = 10; // in px
+
 
 class Frog {
 
@@ -7,10 +7,11 @@ class Frog {
         this.onLog = false;
         this.log = ""
         this.onWinStrip = false
+        this.FROG_MOVE_INC = 10
     }
 
 
-    move(dir, gameBoard, inc = FROG_MOVE_INC) {
+    move(dir, gameBoard, inc = this.FROG_MOVE_INC) {
     
         let left = parseInt(this.tag.style.left.replace("px", ""));
         let top = parseInt(this.tag.style.top.replace("px", ""));

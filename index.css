@@ -4,6 +4,7 @@ body {
     align-items: center;
     justify-content: flex-start;
     background-color: black;
+    font-family: 'Press Start 2P', cursive;
 }
 
 .main {
@@ -27,8 +28,6 @@ body {
     width:  70%;
 }
 
-
-
 .headerTitle{
     font-size: 2em;
     flex-grow: 2;
@@ -42,6 +41,9 @@ body {
 
 .edges{
     background-color: white;
+    display:flex; 
+    align-items: center;
+    justify-content: center;
     width: 15%;
     z-index: 2;
     position: relative;
@@ -65,9 +67,9 @@ body {
     position: relative;
 }
 
-/* .level{
+.level{
     width: 200px;
-} */
+}
 
 
 img {
@@ -80,11 +82,6 @@ img {
     width: 30%;
 }
 
-#avatar-list{
-    width: 200px;
-}
-
-
 #winStrip{
     position: absolute;
 }
@@ -95,6 +92,12 @@ img {
     position: absolute;
     z-index: 1;
     height: 7%;
+}
+
+#back-button{
+    display: none;
+    width: 80%;
+    height: 10%;
 }
 
 #river{
@@ -116,7 +119,7 @@ img {
 .log{
     position: absolute;
     height: 6.5%;
-    width: 12%;
+    width: 9%;
 }
 
 .overlay{
@@ -133,14 +136,25 @@ img {
 }
 
 #start-overlay{
+    display: none;
+    position: absolute;
+    text-align: center;
+    top: 0px;
+    left: 0px;
+    z-index: 2;
+    width: 100%;
+    height: 100%;
+    color: White;
     background-color: rgba(0,0,0,0.75);
 }
 
-#start-overlay > h1{
-    color: lime;
-}
 #start-overlay > h2{
+    color: lime;
+    font-size: 1em;
+}
+#start-overlay > h3{
     color: rgb(16, 229, 236);
+    font-size: .5em;
 }
 
 #three-count{
@@ -173,3 +187,35 @@ img {
     color: White;
 
 }
+
+#form-container{
+    display: flex;
+    flex-wrap: wrap;
+    height: 90%;
+    align-items: stretch; 
+    justify-content: space-evenly;
+    align-content: space-between; 
+ }
+
+ .card{
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    transition: 0.3s;
+    border-radius: 5px;
+    z-index: 3;
+    background-color:white;
+    /* height: 15%;
+    width: 15%; */
+    flex-basis: 16%;
+ }
+
+ .avatar-image{
+    background-color:white;
+    z-index: 4;
+    height: 90%;
+    width: 90%;
+
+ }
+
+ .button {
+    width: 50%;
+ }

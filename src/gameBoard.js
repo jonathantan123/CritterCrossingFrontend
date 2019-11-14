@@ -5,7 +5,7 @@ class GameBoard{
     constructor(game){
         this.tag = document.getElementById("game-holder")
         this.game = game
-
+        this.backButton = document.getElementById("back-button")
         
         //DIMENSIONS
         this.WIDTH = this.tag.offsetWidth
@@ -39,41 +39,65 @@ class GameBoard{
         this.spacebarOverlay = document.getElementById("spacebar-overlay") 
         this.livesTag = document.getElementById("lives")
         this.levelTag = document.getElementById("level")
+
+        this.countDownAudio = new Audio("./audio/countdown.mp3")
     }
 
     // On starting form submit, fetch the avatar
     formSubmitHandler = (e) => {
-        console.dir(e.target)
         e.preventDefault()
     
-        this.game.setLevel(1)
+        this.game.setLevel(this.game.level)
 
-        let id = e.target[0].value
+        let id = e.target.dataset.id
 
         Adapter.getAvatar(this.game, id)
         Adapter.getLanes(this.game) 
+        this.backButton.style.display = "block"
+        console.log("adding event listener")
+        this.backButton.addEventListener("click", this.game.resetGame)
     }
 
     // Builds the avatar dropDown menu
-    buildDropDown(frogs) {
-        let formTag = document.getElementById("form")
-        let avatarList = document.createElement("select")
-        avatarList.id = "avatar-list"
-        let submitDiv = document.getElementsByClassName("select-div")[0]
-
-        frogs.forEach((frog)=>{
-            avatarList.appendChild(new Option (`${frog.avatar}`, frog.id))
-        })
-
-        formTag.insertBefore(avatarList, submitDiv)
+    buildForm(avatars) {
         
-        formTag.addEventListener("submit", this.formSubmitHandler)
+        let formContainer = document.getElementById("form-container")
+        
+        avatars.forEach((avatar)=>{
+        
+            let card = document.createElement("form")
+            card.className = "card"
+            card.dataset.id = avatar.id
 
+           // let avatarImg = document.createElement("img")
+           let avatarImg = document.createElement("input")
+            avatarImg.type = "image"
+            avatarImg.className= "avatar-image"
+            avatarImg.src = avatar.image
+            avatarImg.alt = "Submit"
+           // avatarImg.src = avatar.image
+           
+
+            let breakTag = document.createElement("br")
+
+            // let submitButton = document.createElement("input")
+            // submitButton.type = "submit"
+            // submitButton.className = "button"
+            // submitButton.value= avatar.name
+            // submitButton.dataset.id = avatar.id
+            card.addEventListener("submit", this.formSubmitHandler)
+
+            card.append(avatarImg) //, breakTag, submitButton)
+            formContainer.appendChild(card)
+            
+        })
+        
     }
-
+  
     // Starts the game start countdown
     setCountDown(){
         countDownInterval = setInterval(this.changeCount, 1000)
+        this.countDownAudio.play()
     }
 
 

@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <link rel="stylesheet" type="text/css" href='index.css'>
+  <link href="https://fonts.googleapis.com/css?family=Press+Start+2P&display=swap" rel="stylesheet">
   <script type="text/javascript" src="./src/Log.js"></script>
   <script type="text/javascript" src="./src/Prize.js"></script>
   <script type="text/javascript" src="./src/Lane.js"></script>
@@ -27,42 +28,42 @@
 
   <div class="main">
 
-    <div class="edges"></div>
+    <div class="edges">
+      <button id="back-button">GO HOME</button>
+    </div>
 
     <div id="game-holder">
       <img id= "game-board"src="./img/gameboard.png">
       <div id="form-overlay">
-        <form id="form">
-          <lable>AVATAR:</lable>
-          <div class="select-div"> 
-          </div>
-          <div class="submit-div">
-            <input type="submit" value="START!" class="btn"></input>
-          </div>
-        </form>
+        <lable>CHOOSE YOUR AVATAR:</lable><br><br>
+        <div id="form-container"></div>
       </div>
+
       <div id="frog" ></div>
       <div id="prize" ></div>
-      <div class = "overlay" id="death-overlay"> GAME OVER, IDIOT! </div>
-      <div class = "overlay" id="win-overlay"> YOU WONNNNNNN! </div>
       <div  id="river"></div>
       <div  id="winStrip"></div>
-      <div class = "overlay" id="start-overlay"> 
-          <h1>GOAL: Get across the road and the river to your prize!</h1>
-          <h3>Use the arrow keys to move left, right, up, down</h3>
-          <h3>Hit the space to start or pause</h3>
-          <h1>DON'T GET HIT!</h1>
-          <h3>You have 3 lives...</h3>
-          <h2>READY TO GO? Hit the spacebar to begin!</h2>
-          <h3></h3>
-      </div>
-      <div class = "overlay" id="spacebar-overlay"> PRESS THE SPACE BAR TO START </div>
+
+      <div class = "overlay" id="spacebar-overlay" font-size="10em"> <br>PRESS THE SPACE BAR TO START </div>
       <div class = "overlay" id="lives-overlay"> <h1>YA DIED, BITCH!</h1> <h2><span></span></h2></div>
       <div id="three-count" > 3 </div>
       <div class = "overlay" id="pause-overlay" > <h1>PAUSED </h1></div>
+      <div class = "overlay" id="death-overlay"> GAME OVER, IDIOT! </div>
+      <div class = "overlay" id="win-overlay"> <br><br><h1>YOU WONNNNNNN!</h1> <br> <h2>Loading Next Level...</h2> </div>
+      <div id="start-overlay"> 
+        <h2>GOAL: Get across the road and the river to your prize!</h2>
+        <h4>Use the arrow keys to move left, right, up, down</h4>
+        <h4>Hit the space to start or pause</h4>
+        <h2>DON'T GET HIT!</h2>
+        <h4>You have 3 lives...</h4>
+        <h1><br>READY TO GO?<br> Hit the spacebar to begin!</h1>
+       
+      </div>
+      
     </div>
 
     <div class="edges"></div>
+
   </div>
   
   

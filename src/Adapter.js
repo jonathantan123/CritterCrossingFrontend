@@ -77,7 +77,7 @@ class Adapter{
     static fetchAllFrogs(game) {
         fetch(`${BASE_URL}${FROG_URL}`)
         .then(resp => resp.json())
-        .then(data => game.gameBoard.buildDropDown(data))
+        .then(data => game.gameBoard.buildForm(data))
     }
 
 

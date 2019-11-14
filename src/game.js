@@ -24,7 +24,7 @@ class Game{
         this.lives = 3
         this.paused = true;
         this.firstGo = true;
-        this.level = 1;
+        this.level = 3;
         this.count = 3;
         this.locked = false
         this.CAR_MOVE_TIME = 200
@@ -34,6 +34,12 @@ class Game{
         this.VEHICLE_MOVE_INC = 10 // in px
         this.LOG_MOVE_INC = 10 // in px
 
+        this.splashAudio = new Audio("./audio/splash.mp3")
+        this.winAudio = new Audio("./audio/win.mp3")
+        this.crashAudio = new Audio("./audio/crash.mp3")
+        this.gameOverAudio = new Audio("./audio/gameOver.mp3")
+        this.chinaAudio = new Audio("./audio/china.mp3")
+        
     }
 
     // handles all key presses (arrows and space bar)
@@ -66,7 +72,9 @@ class Game{
 
             //hit spacebar
             if (e.keyCode === 32 && !this.locked){
-    
+                if(this.level === "CHINA"){
+                    this.chinaAudio.play()
+                }
                 this.paused = !this.paused
                 this.gameBoard.pauseOverlay.style.display = "none"
                 this.gameBoard.startOverlay.style.display = "none"
@@ -187,10 +195,10 @@ class Game{
     setLevel(level){
         console.log("setting level")
         this.level = level
-        this.CAR_MOVE_TIME = 175 - this.level * 50//= 200 // in ms
-        this.CAR_ADD_TIME = 1000 - this.level * 200//= 1000 // in ms
+        this.CAR_MOVE_TIME = 175 - this.level * 30//= 200 // in ms
+        this.CAR_ADD_TIME = 1000 - this.level * 100//= 1000 // in ms
         this.LOG_MOVE_TIME = 175 - this.level * 25//= 200 // in ms
-        this.LOG_ADD_TIME = 1000 + this.level * 100//= 1000 // in ms
+        this.LOG_ADD_TIME = 1000 + this.level * 50//= 1000 // in ms
     }
 
     // Set the frog avatar
@@ -239,9 +247,7 @@ class Game{
 
     setChinaLevel(){
        this.CAR_MOVE_TIME = 10 //ms
-       this.LOG_MOVE_TIME = 10
        this.CAR_ADD_TIME = 10//ms
-       this.LOG_ADD_TIME = 10//ms
        this.level = "CHINA"
     }
 
@@ -254,7 +260,7 @@ class Game{
         this.stopTheCars()
 
         this.lives -= 1
-
+        debugger
         this.gameBoard.resetFrog(this.frog)
         this.gameBoard.setLevel(this.level)
         this.gameBoard.setLives(this.lives)
@@ -294,6 +300,7 @@ class Game{
 
         if(this.lives <= 1){
 
+            this.gameOverAudio.play()
             //display that you died
             this.gameBoard.deathOverlay.style.display="block"
             this.stopTheCars()
@@ -400,29 +407,24 @@ class Game{
                 
                 // we're comaparing to log so you're safe
                 if (itemTag.className === "log"){
-                    console.log("YOU'RE ON A LOG!")
+            
                     this.frog.onLog = true;
                     this.frog.log = itemTag
                
-                // We're comparing to the prize so you win
-                // }else if(itemTag.id === "winStrip"){
-                //     console.log("YA ON THE WIN STRIP")
-                //     this.frog.onLog = false
-                //     //this.frog.onWinStrip = true
 
                 }else if(itemTag.id === "prize"){
-                    console.log("YOU HIT THE PRIZE")
+                    this.winAudio.play()
                     this.youWin()
 
                 // you hit river
                 }else if(itemTag.id === "river"){
                     if(!this.frog.onLog ){//&& !this.frog.onWinStrip){
-                        console.log("YOU ARE ON THE RIVER AND NOT ON A LOG")
+                        this.splashAudio.play()
                         this.frogHit()
                     }
 
                 }else{ // hit a car
-                    console.log("YOU HIT A VEHICLE")
+                    this.crashAudio.play()
                     this.frogHit()
                 }  
             }
