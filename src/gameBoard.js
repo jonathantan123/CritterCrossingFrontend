@@ -5,7 +5,7 @@ class GameBoard{
     constructor(game){
         this.tag = document.getElementById("game-holder")
         this.game = game
-        this.backButton = document.getElementById("back-button")
+    
         
         //DIMENSIONS
         this.WIDTH = this.tag.offsetWidth
@@ -39,8 +39,15 @@ class GameBoard{
         this.spacebarOverlay = document.getElementById("spacebar-overlay") 
         this.livesTag = document.getElementById("lives")
         this.levelTag = document.getElementById("level")
+        this.headerTitle = document.getElementById("headerTitle")
 
+        //The audio clip for countdown
         this.countDownAudio = new Audio("./audio/countdown.mp3")
+    }
+
+    hoverHandler(e){
+        console.dir(e.target)
+        e.target.style.cursor="pointer";
     }
 
     // On starting form submit, fetch the avatar
@@ -53,9 +60,11 @@ class GameBoard{
 
         Adapter.getAvatar(this.game, id)
         Adapter.getLanes(this.game) 
-        this.backButton.style.display = "block"
+
         console.log("adding event listener")
-        this.backButton.addEventListener("click", this.game.resetGame)
+
+        this.headerTitle.addEventListener("click", this.game.resetGame)
+        this.headerTitle.addEventListener("mouseover", this.hoverHandler)
     }
 
     // Builds the avatar dropDown menu
