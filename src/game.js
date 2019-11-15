@@ -1,10 +1,3 @@
-// let CAR_MOVE_TIME =200 //= 175// in ms
-// let CAR_ADD_TIME= 800 //=  800  // in ms
-// let LOG_MOVE_TIME = 175
-// let LOG_ADD_TIME = 2000
-// const VEHICLE_MOVE_INC = 10 // in px
-// const LOG_MOVE_INC = 10 // in px
-
  //intervals
 let moveCarInterval
 let addCarInterval 
@@ -24,7 +17,7 @@ class Game{
         this.lives = 3
         this.paused = true;
         this.firstGo = true;
-        this.level = 3;
+        this.level = 1;
         this.count = 3;
         this.locked = false
         this.CAR_MOVE_TIME = 200
@@ -195,10 +188,10 @@ class Game{
     setLevel(level){
         console.log("setting level")
         this.level = level
-        this.CAR_MOVE_TIME = 175 - this.level * 30//= 200 // in ms
-        this.CAR_ADD_TIME = 1000 - this.level * 100//= 1000 // in ms
+        this.CAR_MOVE_TIME = 175 - this.level * 35//= 200 // in ms
+        this.CAR_ADD_TIME = 1000 - this.level * 150//= 1000 // in ms
         this.LOG_MOVE_TIME = 175 - this.level * 25//= 200 // in ms
-        this.LOG_ADD_TIME = 1000 + this.level * 50//= 1000 // in ms
+        this.LOG_ADD_TIME = 1000 + this.level * 100//= 1000 // in ms
     }
 
     // Set the frog avatar
