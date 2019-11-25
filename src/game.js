@@ -186,12 +186,11 @@ class Game{
 
     // Set the level
     setLevel(level){
-        console.log("setting level")
         this.level = level
         this.CAR_MOVE_TIME = 175 - this.level * 35//= 200 // in ms
         this.CAR_ADD_TIME = 1000 - this.level * 150//= 1000 // in ms
-        this.LOG_MOVE_TIME = 175 - this.level * 25//= 200 // in ms
-        this.LOG_ADD_TIME = 1000 + this.level * 100//= 1000 // in ms
+        this.LOG_MOVE_TIME = 150 - this.level * 25//= 200 // in ms
+        this.LOG_ADD_TIME = 1000 + this.level * 150//= 1000 // in ms
     }
 
     // Set the frog avatar
@@ -327,7 +326,7 @@ class Game{
         winInterval = setInterval(this.removeWinOverlay, "3000")
 
         if(this.level < 3){
-            console.log("moving on")
+       
             this.setLevel(this.level + 1)
             this.setupNextLife()
             this.lives = 3
