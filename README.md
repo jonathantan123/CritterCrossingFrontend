@@ -11,7 +11,7 @@ This game is built on a Rails API, with a Javascript frontend. Turn on sound for
 
 #### 2. Launch the Rails BackEnd:
 
-1. Fork and clone https://github.com/maryfarner18/frogger-backend
+1. Fork and clone https://github.com/jonathantan123/CritterCrossingBackend
 2. Navigate to frogger-backend
 3. Run ```bundle install```
 4. Run ```rails db:migrate``` 
