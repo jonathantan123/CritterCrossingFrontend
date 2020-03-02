@@ -60,7 +60,6 @@ class Adapter{
             .then(resp => resp.json())
             .then(data => {
              
-                console.log("the avatar is", data.avatar)
                 game.setFrog(data.avatar)
               
                 //Hide the form

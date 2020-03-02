@@ -209,8 +209,7 @@ img {
     border-radius: 5px;
     z-index: 3;
     background-color:white;
-    /* height: 15%;
-    width: 15%; */
+    margin: 2px;
     flex-basis: 16%;
  }
 

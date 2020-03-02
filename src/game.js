@@ -252,7 +252,7 @@ class Game{
         this.stopTheCars()
 
         this.lives -= 1
-        debugger
+        
         this.gameBoard.resetFrog(this.frog)
         this.gameBoard.setLevel(this.level)
         this.gameBoard.setLives(this.lives)

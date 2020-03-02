@@ -61,8 +61,6 @@ class GameBoard{
         Adapter.getAvatar(this.game, id)
         Adapter.getLanes(this.game) 
 
-        console.log("adding event listener")
-
         this.headerTitle.addEventListener("click", this.game.resetGame)
         this.headerTitle.addEventListener("mouseover", this.hoverHandler)
     }
@@ -72,7 +70,7 @@ class GameBoard{
         
         let formContainer = document.getElementById("form-container")
         
-        avatars.forEach((avatar)=>{
+        avatars.forEach((avatar)=>{    
         
             let card = document.createElement("form")
             card.className = "card"
@@ -82,7 +80,7 @@ class GameBoard{
            let avatarImg = document.createElement("input")
             avatarImg.type = "image"
             avatarImg.className= "avatar-image"
-            avatarImg.src = avatar.image
+            avatarImg.src = avatar.src
             avatarImg.alt = "Submit"
            // avatarImg.src = avatar.image
            
