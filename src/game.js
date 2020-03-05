@@ -65,7 +65,7 @@ class Game{
 
             //hit spacebar
             if (e.keyCode === 32 && !this.locked){
-                if(this.level === "CHINA"){
+                if(this.level === "IMPOSSIBLE"){
                     this.chinaAudio.play()
                 }
                 this.paused = !this.paused
@@ -240,7 +240,7 @@ class Game{
     setChinaLevel(){
        this.CAR_MOVE_TIME = 10 //ms
        this.CAR_ADD_TIME = 10//ms
-       this.level = "CHINA"
+       this.level = "IMPOSSIBLE"
     }
 
     // Reset cars and decrease lives, reset game
